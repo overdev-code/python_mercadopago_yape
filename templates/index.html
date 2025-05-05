@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago con Yape</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yape-purple: #6e2b77;
+            --yape-light: #f3e5f5;
+            --pastel-green: #b2dfdb;
+            --pastel-pink: #f8bbd0;
+            --pastel-blue: #bbdefb;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .payment-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+        
+        .payment-header {
+            background: linear-gradient(135deg, var(--yape-purple), #9c27b0);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        .payment-header .container-main-title{
+			display: flex;
+			justify-content: center;
+			align-items: end;
+			column-gap: .6rem;
+			margin-bottom: .4rem;
+		}
+        .payment-header img {
+            width: 3rem;
+            margin-bottom: 0;
+        }
+        
+        .payment-header h1 {
+            font-weight: 600;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .payment-header p {
+            font-weight: 300;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .payment-body {
+            padding: 25px;
+        }
+        .payment-body .ctn-instructions-amount {
+            display: flex;
+            column-gap: .4rem;
+            margin-bottom: .4rem;
+        }
+        .payment-body .ctn-instructions-amount .ctn-amount{
+            width: 8rem;
+            background: linear-gradient(135deg, var(--yape-purple), #9c27b0);
+            height: auto;
+            padding: .4rem;
+            border-radius: .6rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .payment-body .ctn-instructions-amount .ctn-amount span{
+            font-weight: bold;
+            color: white;
+            white-space: nowrap;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--yape-purple);
+            font-size: 14px;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: var(--yape-light);
+        }
+        
+        .input-field:focus {
+            border-color: var(--yape-purple);
+            outline: none;
+            background-color: white;
+        }
+        
+        .submit-btn {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			column-gap: .4rem;
+            background: linear-gradient(135deg, var(--yape-purple), #9c27b0);
+            color: white;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(110, 43, 119, 0.3);
+        }
+        
+        .payment-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #777;
+            background-color: var(--yape-light);
+        }
+        
+        .decorative-element {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+        
+        .circle-1 {
+            background-color: var(--pastel-green);
+            top: -30px;
+            left: -30px;
+        }
+        
+        .circle-2 {
+            background-color: var(--pastel-pink);
+            bottom: -20px;
+            right: -20px;
+        }
+        
+        .otp-instructions {
+            background-color: var(--pastel-blue);
+            padding: 12px;
+            border-radius: .6rem;
+            font-size: 13px;
+            color: #333;
+        }
+        .backend-response-message{
+            position: fixed;
+            top: .4rem;
+            right: .4rem;
+            padding: .6rem;
+            border-radius: .4rem;
+            background-color: black;
+            color: white;
+            font-size: .9rem; 
+            display: none;
+            justify-content: center;
+            align-items: center;
+            column-gap: .4rem;
+        }
+    </style>
+</head>
+<body>
+    <span class="backend-response-message"></span>
+    <div class="payment-container">
+        <div class="payment-header">
+            <div class="decorative-element circle-1"></div>
+            <div class="decorative-element circle-2"></div>
+			<img src="https://perupacific.com/wp-content/uploads/2020/04/ICONOS-yape-para-pagina-png.png" alt="Yape Logo">
+			<h1>Pago con Yape</h1>
+            <p>Ingresa tus datos para completar la transacción</p>
+        </div>
+        
+        <div class="payment-body">
+            <div class="ctn-instructions-amount">
+                <div class="otp-instructions">
+                    <strong>¿Dónde encuentro mi código OTP?</strong>
+                    <p>Abre tu app Yape y busca el código de 6 dígitos que te hemos enviado</p>
+                </div>
+                <div class="ctn-amount">
+                    <span>S/. 5</span>
+                </div>
+            </div>
+            
+            <form id="yape-payment-form">
+                <div class="form-group">
+                    <label for="phone">Número de teléfono</label>
+                    <input type="tel" id="form-checkout__payerPhone" name="payerPhone" class="input-field" placeholder="999 888 777" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="otp">Código OTP</label>
+                    <input type="text" id="form-checkout__payerOTP" name="payerOTP" class="input-field" placeholder="6 dígitos" required maxlength="6">
+                </div>
+                
+                <button type="button" id="button_pay_yape" class="submit-btn">
+					Confirmar Pago
+				</button>
+            </form>
+        </div>
+        
+        <div class="payment-footer">
+            <p>Transacción segura · <a href="#" style="color: var(--yape-purple);">Términos y condiciones</a></p>
+        </div>
+    </div>
+		
+    <script>
+	
+		const btn_pay = document.getElementById("button_pay_yape");
+        const message = document.querySelector(".backend-response-message");
+		btn_pay.addEventListener("click", async()=>{
+			let token = "";
+			const url = "https://api.mercadopago.com/platforms/pci/yape/v1/payment?public_key=TEST-e0e52a7a-b295-42c0-b6ac-5ef4411b9cd8"
+			const otp = document.getElementById("form-checkout__payerOTP");
+			const phoneNumber = document.getElementById("form-checkout__payerPhone");
+			if (otp && phoneNumber && otp.value && phoneNumber.value){
+				btn_pay.textContent = "Procesando...";
+				// btn_pay.setAttribute("disabled", true);
+
+				await fetch(url, {
+					method:"POST", 
+					body: JSON.stringify({
+						"phoneNumber": phoneNumber.value,
+						"otp": otp.value,
+					})
+				}).then(res => res.json()).then(async(data) =>{
+					token = data.id;
+					const form_data = new FormData();
+					// detalles a enviar [token, description, payer_email]
+					form_data.append("token", token);
+					form_data.append("description", "Pago por matricula de laboratorio");
+					form_data.append("payer_email", "overrimachi2001@gmail.com");
+
+					await fetch("/pagar-con-yape", {
+						method : "POST",
+						body: form_data,
+					}).then(res => res.json()).then(datapay =>{
+                        message.style.display = "flex";
+                        if (datapay.status === "approved"){
+                            message.textContent = "Su pago a sido exitoso";
+                            btn_pay.textContent = "Pagado";
+                        }else{
+                            message.textContent = "Ocurrió un error"
+                            btn_pay.textContent = "Error";
+                        }
+                        otp.value = "";
+                        phoneNumber.value = "";
+						console.log("==>",datapay)
+					})
+				})
+			}else{
+				alert("complete los campos requeridos")
+			}
+		})
+	
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagar con Yape</title>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+</head>
+<body>
+  <h1>Pagar con Yape vía Mercado Pago</h1>
+  
+  <form id="form-checkout">
+    <div>
+      <label for="payerPhone">Phone Number</label>
+      <input id="form-checkout__payerPhone" value="111111111" name="payerPhone" type="text" />
+    </div>
+    <div>
+      <label for="payerOTP">OTP</label>
+      <input id="form-checkout__payerOTP" value="123456" name="payerOTP" type="text" />
+    </div>
+    <div>
+      <button type="button" onclick="handleYape()">Create YAPE</button>
+    </div>
+  </form>
+  
+  
+
+  <script>
+    // const mp = new MercadoPago("TEST-e0e52a7a-b295-42c0-b6ac-5ef4411b9cd8");
+
+    
+  </script>
+</body>
+</html> -->

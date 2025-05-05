@@ -1,0 +1,4 @@
+python-dotenv
+mercadopago
+Flask
+Flask-Cors
